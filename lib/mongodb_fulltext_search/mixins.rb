@@ -105,16 +105,16 @@ module MongodbFulltextSearch::Mixins
           limit = options[:limit].to_i
 
           pipeline = [
-            { '$match'   => { '$and' => queries } },
-            { '$unwind'  => '$counts' },
-            { '$match'   => { '$or' => queries } },
-            { '$sort'    => { 'source' => 1 } },
-            { '$group'   => {
-                '_id'    => { 'source' => 1 },
-                'score'  => { '$sum' => '$counts.count' }
-            } },
-            { '$sort'    => { 'score' => -1 } },
-            { '$limit'   => limit }
+              { '$match'   => { '$and' => queries } },
+              { '$unwind'  => '$counts' },
+              { '$match'   => { '$or' => queries } },
+              { '$sort'    => { 'source' => 1 } },
+              { '$group'   => {
+                  '_id'    => { 'source' => '$source' },
+                  'score'  => { '$sum' => '$counts.count' }
+              } },
+              { '$sort'    => { 'score' => -1 } },
+              { '$limit'   => limit }
           ]
 
           skip = options[:offset].to_i * limit
